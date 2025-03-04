@@ -1,0 +1,96 @@
+openapi: 3.0.0
+info:
+  title: Projects API
+  version: 1.0.0
+  description: API to retrieve all projects from the authenticated user's account.
+
+servers:
+  - url: https://ppmqa.d-sight.com/portfolio/en
+
+paths:
+  /api/projects/v2/list_all_projects:
+    get:
+      summary: Retrieve all projects
+      description: >
+        This endpoint retrieves the list of all projects associated with the authenticated user's account.
+      operationId: listAllProjects
+      parameters:
+        - name: include_archive
+          in: query
+          description: Whether to include archived projects.
+          required: false
+          schema:
+            type: boolean
+        - name: page
+          in: query
+          description: Page number for pagination.
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          description: Number of results per page.
+          required: false
+          schema:
+            type: integer
+            default: 100
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Successful response with the list of projects.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        project_id:
+                          type: string
+                        name:
+                          type: string
+                        description:
+                          type: string
+                        last_modified:
+                          type: string
+                          format: date-time
+                        archived:
+                          type: boolean
+                  meta:
+                    type: object
+                    properties:
+                      total_count:
+                        type: integer
+                      page:
+                        type: integer
+                      per_page:
+                        type: integer
+                      total_pages:
+                        type: integer
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        format: uri
+                      next:
+                        type: string
+                        format: uri
+                        nullable: true
+                      prev:
+                        type: string
+                        format: uri
+                        nullable: true
+        '401':
+          description: Unauthorized - Invalid authentication credentials.
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
