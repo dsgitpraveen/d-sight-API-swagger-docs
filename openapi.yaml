@@ -1,8 +1,10 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
-  title: Projects API
-  version: 1.0.0
-  description: API to retrieve all projects from the authenticated user's account.
+  title: D-Sight API
+  version: "2.3"
+  description: |
+    Welcome to the D-Sight API documentation.
+    This API enables seamless project management by allowing users to create, update, archive, delete, and retrieve project data programmatically.
 
 servers:
   - url: https://ppmqa.d-sight.com/portfolio/en
@@ -10,33 +12,19 @@ servers:
 paths:
   /api/projects/v2/list_all_projects:
     get:
-      summary: Retrieve all projects
-      description: >
-        This endpoint retrieves the list of all projects associated with the authenticated user's account.
-      operationId: listAllProjects
+      summary: Get the list of all projects
+      description: |
+        Retrieves all projects associated with the authenticated user’s account.  
+        Optionally, archived projects can also be included in the response.
+      security:
+        - basicAuth: []
       parameters:
         - name: include_archive
           in: query
-          description: Whether to include archived projects.
+          description: Set to `true` to include archived projects in the response.
           required: false
           schema:
             type: boolean
-        - name: page
-          in: query
-          description: Page number for pagination.
-          required: false
-          schema:
-            type: integer
-            default: 1
-        - name: per_page
-          in: query
-          description: Number of results per page.
-          required: false
-          schema:
-            type: integer
-            default: 100
-      security:
-        - basicAuth: []
       responses:
         '200':
           description: Successful response with the list of projects.
@@ -47,50 +35,483 @@ paths:
                 properties:
                   projects:
                     type: array
+                    description: List of projects.
                     items:
                       type: object
                       properties:
                         project_id:
                           type: string
+                          description: Unique identifier of the project.
                         name:
                           type: string
+                          description: Name of the project.
                         description:
                           type: string
+                          description: Description of the project.
                         last_modified:
                           type: string
                           format: date-time
+                          description: Timestamp of the last modification.
                         archived:
                           type: boolean
+                          description: Indicates if the project is archived.
                   meta:
                     type: object
+                    description: Metadata for pagination.
                     properties:
                       total_count:
                         type: integer
+                        description: Total number of projects.
                       page:
                         type: integer
+                        description: Current page number.
                       per_page:
                         type: integer
+                        description: Number of projects per page.
                       total_pages:
                         type: integer
+                        description: Total number of pages.
                   links:
                     type: object
+                    description: Pagination links.
                     properties:
                       self:
                         type: string
                         format: uri
+                        description: Link to the current request.
                       next:
                         type: string
                         format: uri
                         nullable: true
+                        description: Link to the next page.
                       prev:
                         type: string
                         format: uri
                         nullable: true
+                        description: Link to the previous page.
+              example:
+                projects:
+                  - project_id: "P004"
+                    name: "Project 4"
+                    description: "Description of Project 4"
+                    last_modified: "2025-02-23T05:44:14+01:00"
+                    archived: false
+                  - project_id: "P010"
+                    name: "Project 10"
+                    description: "Description of Project 4"
+                    last_modified: "2025-02-23T05:44:16+01:00"
+                    archived: false
+                meta:
+                  total_count: 2
+                  page: 1
+                  per_page: 100
+                  total_pages: 1
+                links:
+                  self: "https://ppmqa.d-sight.com/portfolio/en/api/projects/v2/list_all_projects?include_archive=true&page=1&per_page=100"
+                  next: null
+                  prev: null
         '401':
-          description: Unauthorized - Invalid authentication credentials.
+          description: Unauthorized - Invalid authentication
+          
+  /api/projects/v2/display_project_details:
+    get:
+      summary: Get project data
+      description: |
+        Retrieves all key data associated with a specific project.
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                company_project:
+                  type: object
+                  required:
+                    - code
+                  properties:
+                    code:
+                      type: string
+                      description: The unique Project ID (e.g., "P010").
+            example:
+              company_project:
+                code: "P010"
+      responses:
+        '200':
+          description: Successful response with project details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projects:
+                    type: object
+                    properties:
+                      Code:
+                        type: string
+                      Name:
+                        type: string
+                      Department:
+                        type: string
+                      Period Start Date:
+                        type: string
+                        format: date
+                      Period End Date:
+                        type: string
+                        format: date
+                      Project Start Date:
+                        type: string
+                        format: date
+                      Project End Date:
+                        type: string
+                        format: date
+                      Project Managers:
+                        type: string
+                      Score:
+                        type: number
+                      Project Status:
+                        type: string
+                      Progress:
+                        type: string
+                      Active Status:
+                        type: string
+                      Description:
+                        type: string
+                      Created At:
+                        type: string
+                        format: date
+                      Last Modified At:
+                        type: string
+                        format: date-time
+                      Status:
+                        type: string
+                      Region:
+                        type: string
+                      Stages:
+                        type: string
+                      Project Type:
+                        type: string
+                      Strategic Impact 3:
+                        type: string
+                      Strategic Impact 1:
+                        type: string
+                      Custom Value:
+                        type: string
+                      Opex:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            Period:
+                              type: string
+                              format: date
+                            Budget:
+                              type: number
+                            Actual/Forecast:
+                              type: number
+              example:
+                projects:
+                  Code: "P010"
+                  Name: "Project 10"
+                  Department: "Dep X.A"
+                  Period Start Date: "2020-01-01"
+                  Period End Date: "2021-12-31"
+                  Project Start Date: "2020-01-01"
+                  Project End Date: "2021-12-31"
+                  Project Managers: "dsight d"
+                  Score: 0.0
+                  Project Status: "SUNNY"
+                  Progress: "20"
+                  Active Status: "active"
+                  Description: "Test Description"
+                  Created At: "2021-05-19"
+                  Last Modified At: "2025-02-23T05:44:16+01:00"
+                  Status: "Ongoing"
+                  Region: "Asia"
+                  Stages: "Invest"
+                  Project Type: "Type T4"
+                  Strategic Impact 3: "Low"
+                  Strategic Impact 1: "High"
+                  Custom Value: "High"
+                  Opex:
+                    - Period: "2020-01-01"
+                      Budget: 29621.6832040632
+                      Actual/Forecast: 30239
+                    - Period: "2020-02-01"
+                      Budget: 12756.7721046142
+                      Actual/Forecast: 13376
+        '400':
+          description: ⚠️ Bad Request – Invalid input.
+        '403':
+          description: ❌ Forbidden – User is not authorized for this action.
+        '404':
+          description: 🔍 Not Found – Project doesn't exist.
+          
+  /api/projects/v2/delete:
+    delete:
+      summary: Delete a project
+      description: |
+        Permanently deletes a project from the system.
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                company_project:
+                  type: object
+                  required:
+                    - code
+                  properties:
+                    code:
+                      type: string
+                      description: The unique Project ID (e.g., "P010").
+            example:
+              company_project:
+                code: "P010"
+      responses:
+        '200':
+          description: ✅ Success – Project(s) deleted successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+                  details:
+                    type: object
+                    properties:
+                      deleted_projects:
+                        type: array
+                        items:
+                          type: string
+                      not_found_projects:
+                        type: array
+                        items:
+                          type: string
+                      not_accessible_projects:
+                        type: array
+                        items:
+                          type: string
+              example:
+                message: "All Projects Deleted Successfully"
+                status: "ok"
+                details:
+                  deleted_projects:
+                    - "P010"
+                  not_found_projects: []
+                  not_accessible_projects: []
+        '207':
+          description: ⚠️ Multi-Status – Combination of cases (partial success).
+        '400':
+          description: ⚠️ Bad Request – Invalid input.
+        '403':
+          description: ❌ Forbidden – Action is restricted for this user.
+        '404':
+          description: 🔍 Not Found – Project doesn't exist.
+          
+  /api/projects/v2/archive:
+    post:
+      summary: Archive a project
+      description: |
+        Archives a project. Archived projects are not deleted but are marked as "archived" and remain accessible in a read-only state.
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                company_project:
+                  type: object
+                  required:
+                    - code
+                  properties:
+                    code:
+                      type: string
+                      description: The unique Project ID to archive (e.g., "P010").
+            example:
+              company_project:
+                code: "P010"
+      responses:
+        '200':
+          description: ✅ Success – Project archived successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  project:
+                    type: string
+              example:
+                message: "Project archived successfully"
+                project: "P010"
+        '400':
+          description: ⚠️ Bad Request – Invalid input.
+        '403':
+          description: ❌ Forbidden – Action is restricted for this user.
+        '404':
+          description: 🔍 Not Found – Project doesn't exist.
+        '409':
+          description: ⚠️ Conflict – Archiving an already archived project.
+        '422':
+          description: ❌ Unprocessable Entity – Request cannot be processed.
+          
+  /company_projects/company_project_mapping:
+    post:
+      summary: Fetch attribute UUID mappings
+      description: |
+        Retrieves UUIDs of all attributes in the client account. These are required for the Project Create/Update API.
+      security:
+        - basicAuth: []
+      requestBody:
+        required: false
+      responses:
+        '200':
+          description: ✅ Success – Attribute UUIDs fetched successfully.
+          content:
+            application/json:
+              example:
+                project_attributes:
+                  - { "Strategic Impact 1": "7f3818c1-33df-4e38-ad18-1a6fb95c7578" }
+                  - { "Custom date": "09f932ff-9bd9-4b70-a28c-2eddf4452d0c" }
+                company_project_groups:
+                  - { "Status": "b710f8ec-9126-41b8-bc38-c453b1327b5c" }
+                  - { "Stages": "2da2cf95-f155-4ad6-9e5c-569c3a41af2b" }
+                company_project_group_values:
+                  "2da2cf95-f155-4ad6-9e5c-569c3a41af2b":
+                    - { "Scope": "dbb9596e-bab6-4a25-9d6d-1a253c4e338e" }
+                    - { "Invest": "bafad483-9213-4e3c-ac86-f739bb513828" }
+                tree_nodes:
+                  - { "Dep X.B": "0b078837-5bd3-4d16-93ee-279c9dc89ba8" }
+                  - { "Dep X.A": "82866a21-e08b-4aa6-aa85-796dc1e14bd1" }
+        '403':
+          description: ❌ Forbidden – Action is restricted for this user.
 
+  /api/projects/v2/update:
+    post:
+      summary: Create or update a project
+      description: |
+        Creates or updates a project in the system.
+        - If `code` (Project ID) exists, the project is updated.
+        - If `code` does not exist, a new project is created.
+        - Supports various attributes and groupings identified by UUIDs.
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                company_project:
+                  type: object
+                  required:
+                    - name
+                    - code
+                    - tree_node_id
+                  properties:
+                    name:
+                      type: string
+                      description: Name of the project.
+                    code:
+                      type: string
+                      description: Unique Project ID (alphanumeric).
+                    tree_node_id:
+                      type: string
+                      format: uuid
+                      description: Portfolio ID (UUID).
+                    description:
+                      type: string
+                    progress:
+                      type: string
+                    status:
+                      type: string
+                      enum: [SUNNY, PARTIAL_CLOUDY, CLOUDY, RAINY, THUNDERSTORM]
+                    score:
+                      type: string
+                    period_start_date:
+                      type: string
+                      format: date
+                    period_end_date:
+                      type: string
+                      format: date
+                company_project_group:
+                  type: object
+                  additionalProperties:
+                    type: string
+                attributes:
+                  type: object
+                  additionalProperties:
+                    oneOf:
+                      - type: string
+                      - type: object
+                        additionalProperties:
+                          type: object
+                          properties:
+                            Budget:
+                              type: object
+                              additionalProperties:
+                                type: string
+            example:
+              company_project:
+                name: "My Test Project"
+                code: "MTPR0001"
+                tree_node_id: "e20796cd-8560-4ade--b0345ad6a463"
+                description: "This is a test project"
+                progress: "20"
+                status: "SUNNY"
+                score: "20.56"
+                period_start_date: "2024-01-01"
+                period_end_date: "2025-12-31"
+              company_project_group:
+                "2da2cf95-f155-4ad6-9e5c-569c3a41af2b": "Scope"
+                "b710f8ec-9126-41b8-bc38-c453b1327b5c": "To start"
+              attributes:
+                "7f3818c1-33df-4e38-ad18-1a6fb95c7578": "Low"
+                "c076ae0a-cd8e-4abe-9d37-71dee1556ca4": "TestAPI"
+                "724g0a2f-38af-41b8-bae6-f617c0aa1707": "16"
+                "c8g2a015-ad0d-41f3-b644-ca95c8dac158":
+                  Budget:
+                    "2024-02-01": "0"
+                    "2024-03-01": "1000000"
+      responses:
+        '200':
+          description: ✅ Success – Project created or updated.
+          content:
+            application/json:
+              example:
+                code: 200
+                message: "Project was successfully created."
+                company_project: "MTPR0001"
+        '400':
+          description: ⚠️ Bad Request – Invalid input.
+        '403':
+          description: ❌ Forbidden – Action is restricted for this user.
+        '404':
+          description: 🔍 Not Found – Project doesn't exist.
+        '422':
+          description: ❌ Unprocessable Entity – Request cannot be processed.
+
+
+
+	
 components:
   securitySchemes:
     basicAuth:
       type: http
       scheme: basic
+
