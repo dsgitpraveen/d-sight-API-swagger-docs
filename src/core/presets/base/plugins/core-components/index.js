@@ -52,7 +52,7 @@ import FilterContainer from "core/containers/filter"
 import ParamBody from "core/components/param-body"
 import Curl from "core/components/curl"
 import Property from "core/components/property"
-import TryItOutButton from "core/components/try-it-out-button"
+
 import VersionPragmaFilter from "core/components/version-pragma-filter"
 import VersionStamp from "core/components/version-stamp"
 import OpenAPIVersion from "core/components/openapi-version"

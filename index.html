@@ -8,9 +8,46 @@
     <link rel="stylesheet" type="text/css" href="index.css" />
     <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
+
+    <style>
+       .swagger-ui .topbar {
+      display: none !important;
+    }
+    .swagger-ui .info .title small {
+    display: none !important;
+    }
+    .url {
+    display: none !important;
+    }
+
+    /* Hide the Authorize button */
+    .swagger-ui .topbar .download-url-wrapper,
+    .swagger-ui .scheme-container .authorize {
+      display: none !important;
+    }
+
+    .topbar {
+    display: flex;
+    justify-content: center; /* Centers the logo horizontally */
+    align-items: center; /* Centers it vertically */
+    height: 60px; /* Adjust based on your preference */
+    background-color: #f8f8f8; /* Optional: change background color */
+    }
+
+    .logo-container img {
+        max-height: 50px; /* Adjust size as needed */
+    }
+
+  </style>
+
   </head>
 
   <body>
+    <div class="topbar">
+      <div class="logo-container">
+        <img src="63e74d41-747f-46c9-a7b6-c6bf39dbdc94.png" alt="Company Logo">
+      </div>
+    </div>
     <div id="swagger-ui"></div>
     <script src="./swagger-ui-bundle.js" charset="UTF-8"> </script>
     <script src="./swagger-ui-standalone-preset.js" charset="UTF-8"> </script>

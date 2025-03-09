@@ -282,7 +282,6 @@ The plugin defines a default list of components that should be protected by erro
   "InfoContainer",
   "ServersContainer",
   "SchemesContainer",
-  "AuthorizeBtnContainer",
   "FilterContainer",
   "Operations",
   "OperationContainer",

@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: D-Sight API
+  title: PPM-API-DOCUMENTATION v2.3
   version: "2.3"
   description: |
     Welcome to the D-Sight API documentation.
